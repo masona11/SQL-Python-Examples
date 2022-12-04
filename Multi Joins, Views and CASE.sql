@@ -1,6 +1,6 @@
 #In this SQL code, I'm querying a database that's holding Movie data from multiple tables to answer questions about the data. 
 
-#1 Multi Join
+#1 Multi Join from 3 diffrent tables
 SELECT DISTINCT(first_name), last_name, title, description, release_year,rating, rental_rate
 FROM film_actor
 INNER JOIN actor
@@ -8,7 +8,7 @@ ON film_actor.actor_id = actor.actor_id
 INNER JOIN film
 ON film_actor.film_id = film.film_id; 
 
-#2 Createing View on mulijoin
+#2 Createing View on 3 different tables
 CREATE VIEW movie_info AS
 SELECT DISTINCT(first_name), last_name, title, description, release_year,rating, rental_rate
 FROM film_actor
