@@ -96,8 +96,31 @@ FROM superbowls;
 SELECT MAX(winner), MAX(stadium)
 FROM superbowls
 
+/* Show all rows where Redskins won and scored 30 points or more*/
+
+SELECT *
+FROM superbowls
+WHERE winner = 'Washington Redskins'
+AND winner_pts > 30
 
 
+/* What was the average points scored for the winners*/
+
+SELECT winner,ROUND(AVG(winner_pts)) AS avg_pts
+FROM superbowls
+GROUP BY winner
+HAVING avg_pts 
+ORDER BY avg_pts DESC
+
+/* Xxample of using CASE statment*/
+
+SELECT *,
+    CASE 
+        WHEN (winner_pts - loser_pts) >= 10 THEN 'Blowout'
+        WHEN (winner_pts - loser_pts) <= 2 THEN 'Close Game'
+        ELSE 'tie'
+        END AS 'When example'
+FROM superbowls;
 
     
 
