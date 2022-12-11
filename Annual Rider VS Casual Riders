@@ -76,7 +76,7 @@ FROM cycling
 GROUP BY member_casual, start_station_name, end_station_name, day_of_week
 ORDER BY num_rides DESC
 
--- Shows the Avgerage start station > 650 in desending order
+-- Shows the Avgerage start station > 650 in descending order
 SELECT member_casual, start_station_name, AVG(start_station_id)
 FROM Cycling
 GROUP BY member_casual, start_station_name
