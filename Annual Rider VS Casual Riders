@@ -1,0 +1,84 @@
+CREATE TABLE cycling 
+(
+	id SERIAL PRIMARY KEY,
+	ride_id VARCHAR (50),
+	rideable_type VARCHAR (50),
+	started_at TIMESTAMP,
+	ended_at TIMESTAMP,
+	start_station_name VARCHAR (50),
+	start_station_id NUMERIC (25),
+	end_station_name VARCHAR (25),
+	end_station_id 	NUMERIC (25),
+	start_lat DOUBLE PRECISION,
+	start_long DOUBLE PRECISION,
+	end_lat DOUBLE PRECISION,
+	end_long DOUBLE PRECISION,
+	member_casual VARCHAR (50)
+)
+	
+SELECT * FROM cycling
+
+-- Count the number of rides for Casual vs Member
+SELECT member_casual, COUNT(ride_id) AS num_rides
+FROM cycling
+GROUP BY member_casual
+
+-- Avg time between start and end
+SELECT member_casual, AVG(ended_at - started_at) AS avg_duration
+FROM cycling
+GROUP BY member_casual
+
+-- Count number of rides for each bike type
+SELECT member_casual, rideable_type, COUNT(ride_id) AS num_rides
+FROM cycling
+GROUP BY member_casual, rideable_type
+
+-- Count the number of rides per hour for each member/casual rider
+SELECT member_casual, EXTRACT(HOUR FROM started_at) AS hour, COUNT(ride_id) AS num_rides
+FROM cycling
+GROUP BY member_casual, hour
+
+-- Extract the day of the week with 1 being Sunday and 7 being Saturday
+-- and count the number of rides
+SELECT member_casual, EXTRACT(DOW FROM started_at) AS day_of_week, COUNT(ride_id) AS num_rides
+FROM cycling
+GROUP BY member_casual, day_of_week
+
+-- Instead of using 1-7 as Day of Week display the actual Day of the Week
+SELECT member_casual, TO_CHAR(started_at, 'Day') AS day_of_week, COUNT(ride_id) AS num_rides
+FROM cycling
+GROUP BY member_casual, day_of_week
+
+
+-- All the above queries combined into one
+SELECT
+    member_casual,
+    COUNT(ride_id) AS num_rides,
+    AVG((ended_at - started_at) * 24) AS avg_duration,
+    rideable_type,
+    EXTRACT(HOUR FROM started_at) AS hour,
+    EXTRACT(DOW FROM started_at) AS day_of_week,
+    TO_CHAR(started_at, 'Day') AS day_of_week_text
+FROM cycling
+GROUP BY member_casual, rideable_type, hour, day_of_week, day_of_week_text
+
+-- Actually query used to determine the difference between Casual and Member for Cycling company.
+-- Created a Tableau Visulization on Tableau Pulic labled Casual Rider VS Annual Rider.
+-- This will help the cycling company determine how to potential turn Casual Riders into Memebers.
+-- This scenario was lacking other specific information such as GEO location, State, address etc...
+SELECT
+    member_casual,
+    start_station_name,
+    end_station_name,
+    COUNT(ride_id) AS num_rides,
+	TO_CHAR(started_at, 'Day') AS day_of_week
+FROM cycling
+GROUP BY member_casual, start_station_name, end_station_name, day_of_week
+ORDER BY num_rides DESC
+
+-- Shows the Avgerage start station > 650 in desending order
+SELECT member_casual, start_station_name, AVG(start_station_id)
+FROM Cycling
+GROUP BY member_casual, start_station_name
+HAVING AVG(start_station_id) >= 650
+ORDER BY AVG(start_station_id) DESC
