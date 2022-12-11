@@ -62,10 +62,11 @@ SELECT
 FROM cycling
 GROUP BY member_casual, rideable_type, hour, day_of_week, day_of_week_text
 
--- Actually query used to determine the difference between Casual and Member for Cycling company.
+-- Actually querys used to determine the difference between Casual and Member for Cycling company.
 -- Created a Tableau Visulization on Tableau Pulic labled Casual Rider VS Annual Rider.
--- This will help the cycling company determine how to potential turn Casual Riders into Memebers.
+-- This will help the cycling company determine how to potentially turn Casual Riders into Memebers.
 -- This scenario was lacking other specific information such as GEO location, State, address etc...
+
 SELECT
     member_casual,
     start_station_name,
@@ -77,6 +78,7 @@ GROUP BY member_casual, start_station_name, end_station_name, day_of_week
 ORDER BY num_rides DESC
 
 -- Shows the Avgerage start station > 650 in descending order
+
 SELECT member_casual, start_station_name, AVG(start_station_id)
 FROM Cycling
 GROUP BY member_casual, start_station_name
