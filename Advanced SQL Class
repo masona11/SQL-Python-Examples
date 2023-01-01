@@ -1,0 +1,50 @@
+--Return title of film with 2nd largets cast
+--JOIN film with film_actor ON film_id
+--COLUMNS title, film_id
+-- Count(film_id)
+--Create ROW_NUMBER() OVER(ORDER BY Count DESC)
+--Filer on ROW = 2
+
+WITH second_larg_film AS (
+SELECT 
+	title,
+	COUNT(fa.film_id) film_cnt
+FROM film
+INNER JOIN film_actor fa
+ON fa.film_id = film.film_id
+GROUP BY title
+)
+SELECT 
+	title
+FROM (
+SELECT
+	title,
+	ROW_NUMBER() OVER(ORDER BY film_cnt DESC) as film_cnt_idx
+FROM second_larg_film ) X
+WHERE film_cnt_idx = 2
+
+--Return the most actors
+--if there are ties return 1
+--JOIN film with film_actor ON film_id
+--COLUMNS title, actor_id
+--Count(actor_id)
+--Create ROW_NUMBER() OVER(ORDER BY Count DESC)
+--Filter on ROW = 1
+
+WITH max_film AS (
+SELECT 
+	title,
+	COUNT(actor_id) as actors
+FROM film 
+INNER JOIN film_actor fa
+ON film.film_id = fa.film_id
+GROUP BY title )
+SELECT
+	title
+FROM (
+SELECT
+	title,
+	ROW_NUMBER() OVER(ORDER BY actors DESC) actor_idx
+FROM max_film ) x
+WHERE actor_idx = 1
+
