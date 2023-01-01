@@ -1,3 +1,4 @@
+## 1
 --Return title of film with 2nd largets cast
 --JOIN film with film_actor ON film_id
 --COLUMNS title, film_id
@@ -23,6 +24,7 @@ SELECT
 FROM second_larg_film ) X
 WHERE film_cnt_idx = 2
 
+## 2
 --Return the most actors
 --if there are ties return 1
 --JOIN film with film_actor ON film_id
@@ -47,4 +49,27 @@ SELECT
 	ROW_NUMBER() OVER(ORDER BY actors DESC) actor_idx
 FROM max_film ) x
 WHERE actor_idx = 1
+
+## 3
+--Return the title of the 2nd shortest film based on duration/length
+--if here are ties return only 1
+--COLUMNS title, length
+--Create ROW_NUMBER() OVER(ORDER BY length ASC)
+-- Filter by ROW = 2
+
+WITH sec_short_film AS (
+SELECT 
+	title,
+	length
+FROM film
+)
+SELECT 
+	title
+FROM (
+SELECT 
+	title,
+	ROW_NUMBER() OVER(ORDER BY length) as length_idx
+FROM sec_short_film
+) X
+WHERE length_idx = 2
 
