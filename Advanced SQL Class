@@ -152,3 +152,18 @@ FROM cust_spend_may
 ) X
 WHERE cust_spend_idx = 2;
 
+## 7
+--Write query to return total number cstomer who DID NOT rent movies in May 2020
+--COUNT(*) from customer table
+--Filter NOT IN 
+--SELECT customer_id from rental
+--Filter on Month of May
+
+SELECT COUNT(*) 
+FROM customer
+WHERE customer_id NOT IN(
+	SELECT customer_id
+	FROM rental
+	WHERE  DATE(rental_ts) >= '2020-05-01'
+	AND    DATE(rental_ts) <= '2020-05-31'
+);
