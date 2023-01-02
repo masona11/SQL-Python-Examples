@@ -87,4 +87,33 @@ WHERE customer_id NOT IN(
 	AND    DATE(rental_ts) <= '2020-05-31'
 );
 
+## 5 
+--Write a query to return first and last name of customer who made the most
+--rental tracactions in May 2020
+--COLUMNS first_name, last_name from customer and rental_id, rental_ts from rental
+--JOIN customer and rental on customer_id = rental_id
+--Filer on total rental DESC
+--Filter by rental_ts on May 2020
+--Order by total rentals DESC
+--Limit 1
 
+
+
+WITH most_rent_trans AS (
+SELECT 
+	last_name,
+	first_name,
+	COUNT(*) AS total_rentals
+FROM rental r
+JOIN customer c
+ON c.customer_id = r.customer_id
+WHERE rental_ts >= '2020-05-01'
+AND rental_ts <= '2020-05-31'
+GROUP BY first_name, last_name
+ORDER BY COUNT(*) DESC
+)
+SELECT 
+	first_name,
+	last_name
+FROM most_rent_trans
+LIMIT 1
