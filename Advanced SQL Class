@@ -95,7 +95,7 @@ WHERE customer_id NOT IN(
 --Filer on total rental DESC
 --Filter by rental_ts on May 2020
 --Order by total rentals DESC
---Limit 1
+--Limit 1;
 
 
 
@@ -116,4 +116,39 @@ SELECT
 	first_name,
 	last_name
 FROM most_rent_trans
-LIMIT 1
+LIMIT 1;
+
+## 6
+--Write query to retrun name of customer who spent 2nd highest 
+--For movie rental in May 2020
+--COLUMNS fist_name, last name from customer - SUM(amount) from payment
+--JOIN customer and payment ON customer_id
+--Filter on payment_ts for Month of May
+--Group by first_name, last_name
+--Create Rank ORDER BY amount DESC
+--Filter where Rank = 2
+
+WITH cust_spend_may AS (
+    SELECT 
+  	c.first_name,
+  	c.last_name,
+	SUM(amount) AS cust_spend
+    FROM payment
+	INNER JOIN customer c
+	ON payment.customer_id = c.customer_id
+    WHERE payment_ts >= '2020-05-01'
+    AND payment_ts < '2020-06-01'
+    GROUP BY c.first_name, c.last_name
+)
+SELECT 
+	first_name,
+	last_name
+FROM (
+SELECT
+	first_name,
+	last_name,
+	RANK() OVER(ORDER BY cust_spend DESC) as cust_spend_idx
+FROM cust_spend_may
+) X
+WHERE cust_spend_idx = 2;
+
