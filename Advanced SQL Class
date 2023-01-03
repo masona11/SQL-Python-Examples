@@ -194,3 +194,29 @@ SELECT
 	title
 FROM aug_films
 WHERE return_ts IS NULL;
+
+## 8 
+--Write a query to return the number of filmd with NO rentals
+--In Feb 2020
+--TABLES film, inventore and rental
+--COUNT(*) films from film_id
+--COLUMNS film_id from film - rental_ts from rental
+--JOIN film, inventory on film_id
+--JOIN rental and inventory on inventory_id
+--Filter on date for Feb 2020
+
+SELECT 
+	COUNT(*) as total_film
+FROM film f
+WHERE film_id NOT IN (
+	SELECT DISTINCT f.film_id
+	FROM film f
+	JOIN inventory i
+	ON f.film_id = i.film_id
+	JOIN rental r
+	ON i.inventory_id = r.inventory_id
+	WHERE rental_ts >= '2020-02-01'
+	AND rental_ts <= '2020-02-28'
+);
+
+
