@@ -6,30 +6,35 @@ from openpyxl import load_workbook
 from openpyxl.styles import Alignment
 from bs4 import BeautifulSoup
 import requests
+import os
 
 # Prompt the user to choose an input type and enter the search term
-input_type = input('Enter 1 to search by parcel number, or 2 to search by key: ')
+while True:
+    input_type = input('Enter 1 to search by parcel number, or 2 to search by key: ')
+    if input_type == '1' or input_type == '2':
+        break
+    print("Invalid input, please enter 1 or 2")
 search_term = input('Enter the search term: ')
+print(search_term)
 
-# Open the web browser and go to the website
-driver = webdriver.Chrome()
-driver.get("URL HERE")
+# Open Microsoft Edge and go to the website
+driver = webdriver.Edge()
+driver.get("ENTER URL")
 
 # Wait for the page to fully load
 time.sleep(5)
 
 # Find the search bar element and enter the search term
-search_bar = driver.find_element(by=By.XPATH, value='HTML/XPath')
+search_bar = driver.find_element(by=By.XPATH, value='XPath here')
 search_bar.send_keys(search_term)
 
 # Find the search button element and click it
-search_button = driver.find_element(by=By.XPATH, value='HTML/XPath')
+search_button = driver.find_element(by=By.XPATH, value='/html here)
 search_button.click()
-
 time.sleep(5)
 
 # Click the first result
-search_button = driver.find_element(by=By.XPATH, value='/HTML/XPath')
+search_button = driver.find_element(by=By.XPATH, value='/html here')
 search_button.click()
 
 # Wait for the page to fully load
@@ -53,25 +58,30 @@ element = soup.find('th', text='Name:')
 # Extract the Name from the element
 name = element.find_next_sibling().text
 
-# Find the element containing the Address
-element = soup.find(lambda tag: tag.name=='th' and 'Address:' in tag.text)
+# Find the element containing the Mailing Address
+element = soup.find('th', text='Mailing Address:')
 
-# Extract the Address from the element
-address = element.find_next_sibling().text
+# Extract the Mailing Address from the element
+mailing_address = element.find_next_sibling().text
 
 # Split the address into parts
-parts = address.split(',')
+parts = mailing_address.split(',') #using mailing address
 
 # Extract the city, state, and zip code from the address
+#city = parts[0].strip().split(' ')[-1]
+#state_zip = parts[1].strip()
+#state, zip_code = state_zip.split(' ')
 city = parts[0].strip().split(' ')[-1]
 state_zip = parts[1].strip()
-state, zip_code = state_zip.split(' ')
+
+#Split state_zip into state and zip_code
+state, zip_code = state_zip.rsplit(' ', 1)
 
 # Load the workbook
-wb = load_workbook(r'file location.xlsx')
+wb = load_workbook(r'ENTER FILE PATH HERE.xlsx')
 
 # Select the sheet
-ws = wb['Justification Worksheet']
+ws = wb['ENTER WORKSHEET NAME']
 
 # Select the cells
 cell1 = ws['C7'] # Parcel Number
@@ -84,7 +94,7 @@ cell6 = ws['G12'] # Zip code
 # Set the values of the cells
 cell1.value = parcel_number
 cell2.value = name
-cell3.value = address
+cell3.value = mailing_address
 cell4.value = city
 cell5.value = state
 cell6.value = zip_code
@@ -98,4 +108,13 @@ cell5.alignment = Alignment(horizontal='left', vertical='center', shrink_to_fit=
 cell6.alignment = Alignment(horizontal='left', vertical='center', shrink_to_fit=False)
 
 # Save the workbook
-wb.save('completetest.xlsx')
+wb.save('ENTER FILE PATH HERE.xlsx')
+    
+# Print if saved or not    
+if os.path.exists('ENTER FILE PATH HERE.xlsx'):
+    print(f'File saves succesfully')
+else:
+    print(f'Error: Unable to save file')
+    
+#Close out the webbrower
+driver.close()
