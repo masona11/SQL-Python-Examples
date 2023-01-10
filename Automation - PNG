@@ -1,0 +1,71 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import time
+import os
+
+# Prompt the user to choose an input type and enter the search term
+while True:
+    input_type = input('Enter 1 to some text, or 2 to search some text: ')
+    if input_type == '1' or input_type == '2':
+        break
+    print("Invalid input, please enter 1 or 2")
+search_term = input('Enter the search term: ')
+print(search_term)
+
+# Open Microsoft Edge and go to the website
+driver = webdriver.Edge()
+driver.get("ENTER URL")
+
+# Wait for the page to fully load
+time.sleep(5)
+
+# Find the search bar element and enter the search term
+search_bar = driver.find_element(by=By.XPATH, value='XPath here')
+search_bar.send_keys(search_term)
+
+# Find the search button element and click it
+search_button = driver.find_element(by=By.XPATH, value='/html here')
+search_button.click()
+time.sleep(5)
+
+# Click the first result
+search_button = driver.find_element(by=By.XPATH, value='/html here')
+search_button.click()
+
+# Wait for the page to fully load
+time.sleep(5)
+
+# Add a delay before taking the screenshot
+time.sleep(10)
+
+# Get the dimensions of the viewport
+viewport_width = driver.execute_script("return Math.max( document.body.scrollWidth, document.body.offsetWidth, document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth );")
+viewport_height = driver.execute_script("return Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight );")
+
+# Set the width and height of the viewport to the full size of the page
+driver.set_window_size(viewport_width, viewport_height)
+
+# Wait for the page to fully load
+time.sleep(10)
+
+# Get the screenshot as a PNG image
+screenshot_png = driver.get_screenshot_as_png()
+
+if screenshot_png is not None:
+    # Specify the file path and filename
+    file_path = r" - ENTER FILE PATHH.png"
+
+    # Write the screenshot to a file
+    with open(file_path, "wb") as f:
+        f.write(screenshot_png)
+
+    if os.path.exists(file_path):
+        print(f'Screenshot saved to {file_path}')
+    else:
+        print(f'Error: Screenshot not saved to {file_path}')
+else:
+    print("Error: Screenshot not taken")
+
+# Close the web browser
+
+driver.close()
