@@ -1,0 +1,101 @@
+# Import the necessary modules
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import time
+from openpyxl import load_workbook
+from openpyxl.styles import Alignment
+from bs4 import BeautifulSoup
+import requests
+
+# Prompt the user to choose an input type and enter the search term
+input_type = input('Enter 1 to search by parcel number, or 2 to search by key: ')
+search_term = input('Enter the search term: ')
+
+# Open the web browser and go to the website
+driver = webdriver.Chrome()
+driver.get("https://esearch.mobilecopropertytax.com/")
+
+# Wait for the page to fully load
+time.sleep(5)
+
+# Find the search bar element and enter the search term
+search_bar = driver.find_element(by=By.XPATH, value='//*[@id="keywords"]')
+search_bar.send_keys(search_term)
+
+# Find the search button element and click it
+search_button = driver.find_element(by=By.XPATH, value='/html/body/div[2]/div[1]/div/div[2]/div/div/span/button')
+search_button.click()
+
+time.sleep(5)
+
+# Click the first result
+search_button = driver.find_element(by=By.XPATH, value='/html/body/div[3]/div[3]/div[1]/div[2]/table/tbody/tr')
+search_button.click()
+
+# Wait for the page to fully load
+time.sleep(5)
+
+# Get the HTML source code of the page
+html = driver.page_source
+
+# Parse the HTML page
+soup = BeautifulSoup(html, 'lxml')
+
+# Find the element containing the Parcel Number
+element = soup.find('th', text='Parcel Number:')
+
+# Extract the Parcel Number from the element
+parcel_number = element.find_next_sibling().text
+
+# Find the element containing the Name
+element = soup.find('th', text='Name:')
+
+# Extract the Name from the element
+name = element.find_next_sibling().text
+
+# Find the element containing the Address
+element = soup.find(lambda tag: tag.name=='th' and 'Address:' in tag.text)
+
+# Extract the Address from the element
+address = element.find_next_sibling().text
+
+# Split the address into parts
+parts = address.split(',')
+
+# Extract the city, state, and zip code from the address
+city = parts[0].strip().split(' ')[-1]
+state_zip = parts[1].strip()
+state, zip_code = state_zip.split(' ')
+
+# Load the workbook
+wb = load_workbook(r'C:\\Users\\user\\Desktop\\EJW Template.xlsx')
+
+# Select the sheet
+ws = wb['Justification Worksheet']
+
+# Select the cells
+cell1 = ws['C7'] # Parcel Number
+cell2 = ws['C10'] # Name
+cell3 = ws['C11'] # Address
+cell4 = ws['C12'] # City
+cell5 = ws['E12'] # State
+cell6 = ws['G12'] # Zip code
+
+# Set the values of the cells
+cell1.value = parcel_number
+cell2.value = name
+cell3.value = address
+cell4.value = city
+cell5.value = state
+cell6.value = zip_code
+
+# Modify the format and alignment of the cells
+cell1.alignment = Alignment(horizontal='left', vertical='center', shrink_to_fit=False)
+cell2.alignment = Alignment(horizontal='left', vertical='center', shrink_to_fit=False)
+cell3.alignment = Alignment(horizontal='left', vertical='center', shrink_to_fit=False)
+cell4.alignment = Alignment(horizontal='left', vertical='center', shrink_to_fit=False)
+cell5.alignment = Alignment(horizontal='left', vertical='center', shrink_to_fit=False)
+cell6.alignment = Alignment(horizontal='left', vertical='center', shrink_to_fit=False)
+
+# Save the workbook
+wb.save('completetest.xlsx')
